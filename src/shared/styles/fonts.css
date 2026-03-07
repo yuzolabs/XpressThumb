@@ -1,0 +1,38 @@
+/**
+ * Local font definitions for offline PWA support
+ * These fonts are loaded from local assets instead of Google Fonts CDN
+ */
+
+/* Noto Sans JP */
+@font-face {
+  font-family: 'Noto Sans JP';
+  src: url('/fonts/noto-sans-jp/NotoSansJP-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans JP';
+  src: url('/fonts/noto-sans-jp/NotoSansJP-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* M PLUS Rounded 1c */
+@font-face {
+  font-family: 'M PLUS Rounded 1c';
+  src: url('/fonts/m-plus-rounded-1c/MPLUSRounded1c-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'M PLUS Rounded 1c';
+  src: url('/fonts/m-plus-rounded-1c/MPLUSRounded1c-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
