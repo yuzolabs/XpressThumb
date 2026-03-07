@@ -27,15 +27,13 @@ export const PreviewCanvasHost: React.FC<PreviewCanvasHostProps> = ({ state, onO
     let isActive = true;
     const render = async () => {
       if (!canvasRef.current) return;
-      
-      // Ensure fonts are loaded before rendering
+
       if (!areFontsReady([state.text.font])) {
         await waitForFonts([state.text.font]);
       }
 
       if (!isActive) return;
 
-      // Sync background image asset if needed
       if (state.background.mode === 'image' && state.background.objectUrl) {
         if (assetsRef.current.backgroundImage?.src !== state.background.objectUrl) {
           const img = new Image();
@@ -50,14 +48,11 @@ export const PreviewCanvasHost: React.FC<PreviewCanvasHostProps> = ({ state, onO
         assetsRef.current.backgroundImage = null;
       }
 
-      // Sync pattern image asset if needed
       if (state.pattern.type !== 'none' && PATTERNS[state.pattern.type]) {
         const rawSvg = PATTERNS[state.pattern.type];
         const coloredSvg = rawSvg.replace(/currentColor/g, state.pattern.color);
-        
-        // Use encodeURIComponent to create a reliable data URL that can be easily compared
         const dataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(coloredSvg)}`;
-        
+
         if (assetsRef.current.patternImage?.src !== dataUrl) {
           const img = new Image();
           img.src = dataUrl;
@@ -71,7 +66,6 @@ export const PreviewCanvasHost: React.FC<PreviewCanvasHostProps> = ({ state, onO
         assetsRef.current.patternImage = null;
       }
 
-      // Sync overlay image asset if needed
       if (state.overlay.objectUrl) {
         if (assetsRef.current.overlayImage?.src !== state.overlay.objectUrl) {
           const img = new Image();
@@ -102,22 +96,58 @@ export const PreviewCanvasHost: React.FC<PreviewCanvasHostProps> = ({ state, onO
     };
   }, [state]);
 
+  const hasWarning = overflow || errorMsg;
+
   return (
-    <div className="preview-canvas-host">
-      <div className="canvas-wrapper" style={{
-        aspectRatio: state.ratio.replace(':', '/')
-      }}>
-        <canvas ref={canvasRef} className="preview-canvas" />
-        {errorMsg && (
-          <div className="error-warning" style={{ color: "red", marginTop: "10px" }}>
-            ⚠️ {errorMsg}
-          </div>
-        )}
-        {overflow && (
-          <div className="overflow-warning">
-            ⚠️ Text exceeds canvas boundaries. Please reduce font size or text length.
-          </div>
-        )}
+    <div className="preview-canvas-host" data-testid="preview-canvas-host">
+      <div className="canvas-stage">
+        <div
+          className="canvas-frame"
+          style={{ aspectRatio: state.ratio.replace(':', '/') }}
+        >
+          <canvas
+            ref={canvasRef}
+            className="preview-canvas"
+            role="img"
+            aria-label="Thumbnail preview"
+          />
+        </div>
+      </div>
+
+      {hasWarning && (
+        <div className="status-banner-container">
+          {errorMsg && (
+            <div className="status-banner status-banner--error" role="alert">
+              <svg className="status-banner__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <span className="status-banner__text">{errorMsg}</span>
+            </div>
+          )}
+
+          {overflow && (
+            <div className="status-banner status-banner--warning" role="alert">
+              <svg className="status-banner__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+              <span className="status-banner__text">
+                Text exceeds canvas boundaries. Please reduce font size or text length.
+              </span>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="canvas-meta">
+        <span className="canvas-dimensions">{state.ratio}</span>
+        <span className="canvas-divider">·</span>
+        <span className="canvas-status">
+          {hasWarning ? 'Needs attention' : 'Ready to export'}
+        </span>
       </div>
     </div>
   );
