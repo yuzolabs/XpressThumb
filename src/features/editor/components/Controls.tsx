@@ -249,3 +249,69 @@ export const GradientBackgroundPicker: React.FC<{
     </div>
   );
 };
+
+export const OverlayUpload: React.FC<{ onUpload: (dataUrl: string) => void, onRemove: () => void, hasOverlay: boolean }> = ({ onUpload, onRemove, hasOverlay }) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          onUpload(event.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  return (
+    <div className="control-group upload-group">
+      <label className="control-label">Image Overlay</label>
+      <div className="upload-container">
+        {hasOverlay ? (
+          <button className="brutal-button" onClick={onRemove} style={{ backgroundColor: '#E63946', width: '100%' }}>
+            <span className="button-text">REMOVE_OVERLAY</span>
+            <span className="button-glitch"></span>
+          </button>
+        ) : (
+          <>
+            <input
+              data-testid="overlay-upload"
+              type="file"
+              accept="image/*"
+              className="styled-file-input"
+              onChange={handleFileChange}
+              id="overlay-upload-input"
+            />
+            <label htmlFor="overlay-upload-input" className="upload-button">
+              Add Overlay Image
+            </label>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export const SliderControl: React.FC<{
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  unit?: string;
+  onChange: (value: number) => void;
+  testId?: string;
+}> = ({ label, value, min, max, unit = '', onChange, testId }) => (
+  <div className="control-group slider-group">
+    <label className="control-label">{label} <span className="slider-value">{value}{unit}</span></label>
+    <input
+      data-testid={testId}
+      type="range"
+      className="styled-slider"
+      min={min}
+      max={max}
+      value={value}
+      onChange={(e) => onChange(Number(e.target.value))}
+    />
+  </div>
+);

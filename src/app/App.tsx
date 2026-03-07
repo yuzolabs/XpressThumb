@@ -15,7 +15,9 @@ import {
   ImageUpload,
   DownloadButton,
   SolidBackgroundPicker,
-  GradientBackgroundPicker
+  GradientBackgroundPicker,
+  OverlayUpload,
+  SliderControl
 } from '../features/editor/components/Controls'
 import { PreviewCanvasHost } from '../features/editor/components/PreviewCanvasHost'
 
@@ -68,6 +70,18 @@ function App() {
               <PatternSelect value={current.pattern.type} onChange={v => dispatch({ type: 'SET_PATTERN_TYPE', payload: v as any })} />
             </div>
 
+            {current.pattern.type !== 'none' && (
+              <SliderControl
+                label="Pattern Opacity"
+                value={Math.round(current.pattern.opacity * 100)}
+                min={0}
+                max={100}
+                unit="%"
+                onChange={v => dispatch({ type: 'SET_PATTERN_OPACITY', payload: v / 100 })}
+                testId="pattern-opacity-slider"
+              />
+            )}
+
             {current.background.mode === 'solid' && (
               <SolidBackgroundPicker 
                 value={current.background.mode === 'solid' ? current.background.color : '#1a1a2e'} 
@@ -90,6 +104,44 @@ function App() {
 
             {current.background.mode === 'image' && (
               <ImageUpload onUpload={v => dispatch({ type: 'SET_BACKGROUND_IMAGE_OBJECT_URL', payload: v })} />
+            )}
+
+            <OverlayUpload 
+              hasOverlay={!!current.overlay.objectUrl}
+              onUpload={v => dispatch({ type: 'SET_OVERLAY_OBJECT_URL', payload: v })}
+              onRemove={() => dispatch({ type: 'SET_OVERLAY_OBJECT_URL', payload: null })}
+            />
+
+            {current.overlay.objectUrl && (
+              <>
+                <SliderControl
+                  label="Overlay Size"
+                  value={current.overlay.size}
+                  min={10}
+                  max={80}
+                  unit="%"
+                  onChange={v => dispatch({ type: 'SET_OVERLAY_SIZE', payload: v })}
+                  testId="overlay-size-slider"
+                />
+                <div className="grid-controls">
+                  <SliderControl
+                    label="Pos X"
+                    value={current.overlay.positionX}
+                    min={-100}
+                    max={100}
+                    onChange={v => dispatch({ type: 'SET_OVERLAY_POSITION_X', payload: v })}
+                    testId="overlay-pos-x-slider"
+                  />
+                  <SliderControl
+                    label="Pos Y"
+                    value={current.overlay.positionY}
+                    min={-100}
+                    max={100}
+                    onChange={v => dispatch({ type: 'SET_OVERLAY_POSITION_Y', payload: v })}
+                    testId="overlay-pos-y-slider"
+                  />
+                </div>
+              </>
             )}
 
             <DownloadButton onClick={handleDownload} disabled={state.validation.textOverflow} />

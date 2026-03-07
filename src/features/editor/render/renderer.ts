@@ -14,6 +14,7 @@ export type RenderMode = 'preview' | 'export';
 export interface AssetCache {
   backgroundImage: HTMLImageElement | null;
   overlayImage: HTMLImageElement | null;
+  patternImage: HTMLImageElement | null;
 }
 
 export interface RenderResult {
@@ -209,115 +210,35 @@ function renderBackground(
   }
 }
 
-function renderNoisePattern(
-  ctx: CanvasRenderingContext2D,
-  opacity: number,
-  scale: number,
-  color: string,
-  width: number,
-  height: number
-): void {
-  ctx.save();
-  ctx.globalAlpha = opacity;
-
-  const baseSize = 2 * scale;
-  const cols = Math.ceil(width / baseSize);
-  const rows = Math.ceil(height / baseSize);
-
-  ctx.fillStyle = color;
-
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < cols; col++) {
-      if (Math.random() > 0.5) {
-        const x = col * baseSize;
-        const y = row * baseSize;
-        ctx.fillRect(x, y, baseSize, baseSize);
-      }
-    }
-  }
-
-  ctx.restore();
-}
-
-function renderDotPattern(
-  ctx: CanvasRenderingContext2D,
-  opacity: number,
-  scale: number,
-  color: string,
-  width: number,
-  height: number
-): void {
-  ctx.save();
-  ctx.globalAlpha = opacity;
-  ctx.fillStyle = color;
-
-  const spacing = 20 * scale;
-  const dotSize = 3 * scale;
-
-  for (let y = spacing / 2; y < height; y += spacing) {
-    for (let x = spacing / 2; x < width; x += spacing) {
-      ctx.beginPath();
-      ctx.arc(x, y, dotSize, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  ctx.restore();
-}
-
-function renderGridPattern(
-  ctx: CanvasRenderingContext2D,
-  opacity: number,
-  scale: number,
-  color: string,
-  width: number,
-  height: number
-): void {
-  ctx.save();
-  ctx.globalAlpha = opacity;
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 1 * scale;
-
-  const spacing = 40 * scale;
-
-  for (let x = 0; x <= width; x += spacing) {
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, height);
-    ctx.stroke();
-  }
-
-  for (let y = 0; y <= height; y += spacing) {
-    ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(width, y);
-    ctx.stroke();
-  }
-
-  ctx.restore();
-}
-
 function renderPattern(
   ctx: CanvasRenderingContext2D,
   config: PatternConfig,
+  assets: AssetCache,
   width: number,
   height: number
 ): void {
-  if (config.type === 'none') {
+  if (config.type === 'none' || !assets.patternImage) {
     return;
   }
 
-  switch (config.type) {
-    case 'noise':
-      renderNoisePattern(ctx, config.opacity, config.scale, config.color, width, height);
-      break;
-    case 'dot':
-      renderDotPattern(ctx, config.opacity, config.scale, config.color, width, height);
-      break;
-    case 'grid':
-      renderGridPattern(ctx, config.opacity, config.scale, config.color, width, height);
-      break;
+  ctx.save();
+  ctx.globalAlpha = config.opacity;
+  
+  const pattern = ctx.createPattern(assets.patternImage, 'repeat');
+  if (pattern) {
+    ctx.fillStyle = pattern;
+    
+    if (config.scale && config.scale !== 1) {
+      if (typeof DOMMatrix !== 'undefined') {
+        const matrix = new DOMMatrix().scale(config.scale, config.scale);
+        pattern.setTransform(matrix);
+      }
+    }
+    
+    ctx.fillRect(0, 0, width, height);
   }
+
+  ctx.restore();
 }
 
 function calculateTextPosition(
@@ -535,7 +456,7 @@ export function renderThumbnail(
     error = bgError;
   }
 
-  renderPattern(ctx, state.pattern, width, height);
+  renderPattern(ctx, state.pattern, assets, width, height);
   const textOverflow = renderText(ctx, state.text, width, height);
   renderOverlay(ctx, state.overlay, assets, width, height);
 

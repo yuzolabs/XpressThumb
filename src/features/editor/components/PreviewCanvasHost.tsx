@@ -2,6 +2,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import './PreviewCanvasHost.css';
 import { EditorConfig } from '../../../shared/types/editor';
 import { renderThumbnail, areFontsReady, waitForFonts, AssetCache } from '../render/renderer';
+import dotPatternSvg from '../../../assets/patterns/dot.svg?raw';
+import gridPatternSvg from '../../../assets/patterns/grid.svg?raw';
+import noisePatternSvg from '../../../assets/patterns/noise.svg?raw';
+
+const PATTERNS: Record<string, string> = {
+  dot: dotPatternSvg,
+  grid: gridPatternSvg,
+  noise: noisePatternSvg,
+};
 
 interface PreviewCanvasHostProps {
   state: EditorConfig;
@@ -12,7 +21,7 @@ export const PreviewCanvasHost: React.FC<PreviewCanvasHostProps> = ({ state, onO
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [overflow, setOverflow] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const assetsRef = useRef<AssetCache>({ backgroundImage: null, overlayImage: null });
+  const assetsRef = useRef<AssetCache>({ backgroundImage: null, overlayImage: null, patternImage: null });
 
   useEffect(() => {
     let isActive = true;
@@ -41,8 +50,43 @@ export const PreviewCanvasHost: React.FC<PreviewCanvasHostProps> = ({ state, onO
         assetsRef.current.backgroundImage = null;
       }
 
-      if (!isActive) return;
+      // Sync pattern image asset if needed
+      if (state.pattern.type !== 'none' && PATTERNS[state.pattern.type]) {
+        const rawSvg = PATTERNS[state.pattern.type];
+        const coloredSvg = rawSvg.replace(/currentColor/g, state.pattern.color);
+        
+        // Use encodeURIComponent to create a reliable data URL that can be easily compared
+        const dataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(coloredSvg)}`;
+        
+        if (assetsRef.current.patternImage?.src !== dataUrl) {
+          const img = new Image();
+          img.src = dataUrl;
+          await new Promise((resolve) => {
+            img.onload = resolve;
+            img.onerror = resolve;
+          });
+          assetsRef.current.patternImage = img;
+        }
+      } else {
+        assetsRef.current.patternImage = null;
+      }
 
+      // Sync overlay image asset if needed
+      if (state.overlay.objectUrl) {
+        if (assetsRef.current.overlayImage?.src !== state.overlay.objectUrl) {
+          const img = new Image();
+          img.src = state.overlay.objectUrl;
+          await new Promise((resolve) => {
+            img.onload = resolve;
+            img.onerror = resolve;
+          });
+          assetsRef.current.overlayImage = img;
+        }
+      } else {
+        assetsRef.current.overlayImage = null;
+      }
+
+      if (!isActive) return;
       const result = renderThumbnail(state, assetsRef.current, canvasRef.current, 'preview');
       setOverflow(result.textOverflow);
       setErrorMsg(result.error);
