@@ -2,50 +2,116 @@
 
 **Think in English, output in Japanese.**
 
-## Environment
+## Overview
 
-- bun (always use `bun install --frozen-lockfile` to install dependencies)
-- uv (python packages management)
+XpressThumb - X（旧 Twitter）向けサムネイル画像ジェネレーター
+React 19 + TypeScript + Vite による PWA アプリケーション
 
-## Notice
+## Structure
 
-- Do not modify `package.json`/lockfiles to add or update dependencies without explicit user approval.
-- Do not chain `cd` commands with `&&`.
+```
+.
+├── src/
+│   ├── app/              # アプリケーションエントリーポイント
+│   ├── features/editor/  # サムネイルエディタ機能
+│   ├── shared/           # 共有型定義・ユーティリティ
+│   └── assets/           # フォント・パターンアセット
+├── tests/
+│   ├── unit/             # Vitest ユニットテスト
+│   └── e2e/              # Playwright E2Eテスト
+└── .github/workflows/    # CI設定
+```
 
-## Tools Selection in shell
+## Where to Look
 
-When you need to call tools from the shell, use this guide:
+| Task | Location | Notes |
+|------|----------|-------|
+| Entry point | `src/app/main.tsx` | React root + PWA SW登録 |
+| Root component | `src/app/App.tsx` | useReducer統合、Controls統合 |
+| State types | `src/shared/types/editor.ts` | EditorState, EditorConfig, Actions |
+| State logic | `src/features/editor/state/` | Reducer, selectors, initialState |
+| Canvas render | `src/features/editor/render/` | renderer.ts, export.ts |
+| Offline assets | `src/features/editor/offline/` | Service Worker, fontLoader |
+| UI Controls | `src/features/editor/components/` | Controls.tsx, PreviewCanvasHost.tsx |
+| File validation | `src/shared/lib/fileValidation.ts` | 画像アップロード検証 |
+| Unit tests | `tests/unit/` | `*.spec.ts` Vitest |
+| E2E tests | `tests/e2e/` | `*.spec.ts` Playwright |
 
-- Exclude bulky folders to keep searches fast and relevant: `.git` and `node_modules`
-- Also exclude `coverage`, `out`, `dist`, and `.venv`
-- Find files by file name: `fd`
-- Find files with path name: `fd -p <file-path>`
-- List files in a directory: `fd . <directory>`
-- Find files with extension and pattern: `fd -e <extension> <pattern>`
-- Find Text: `rg` (ripgrep)
-- Prefer running searches against a scoped path (e.g., `src`) to implicitly avoid vendor and VCS directories.
-- Examples:
-  - `fd --hidden --exclude .git --exclude node_modules --exclude coverage --exclude out --exclude dist --type f ".tsx?$" src`
-  - `rg -n "pattern" -g "!{.git,node_modules,coverage,out,dist}" src`
-- Find Code Structure: `ast-grep`
-  - Default to TypeScript when in TS/TSX repos:
-    - `.ts` → `ast-grep --lang ts -p '<pattern>'`
-    - `.tsx` (React) → `ast-grep --lang tsx -p '<pattern>'`
-  - Other common languages:
-    - Python → `ast-grep --lang python -p '<pattern>'`
-    - Bash → `ast-grep --lang bash -p '<pattern>'`
-    - JavaScript → `ast-grep --lang js -p '<pattern>'`
-    - Rust → `ast-grep --lang rust -p '<pattern>'`
-    - JSON → `ast-grep --lang json -p '<pattern>'`
-  - TypeScript quick actions:
-    - If `ast-grep` is available, avoid `rg` or `grep` unless a plain-text search is explicitly requested.
-    - Prefer `tsx` for fast Node execution.
-    - Structured search and refactors with `ast-grep`.
-    - Find all exported interfaces: `ast-grep --lang ts -p 'export interface $I { ... }'`.
-    - Find default exports: `ast-grep --lang ts -p 'export default $X'`.
-    - Find a function call with args: `ast-grep --lang ts -p 'axios.get($URL, $$REST)'`.
-    - Rename an imported specifier (codemod): `ast-grep --lang ts -p 'import { $Old as $Alias } from "$M"' --rewrite 'import { $Old } from "$M"' -U`.
-    - Disallow await in Promise.all items (quick fix): `ast-grep --lang ts -p 'await $X' --inside 'Promise.all($_)' --rewrite '$X'`.
-    - React hook smell: empty deps array in useEffect: `ast-grep --lang tsx -p 'useEffect($FN, [])'`.
-    - List matching files then pick with fzf: `ast-grep --lang ts -p '<pattern>' -l | fzf -m | xargs -r sed -n '1,120p'`.
-- JSON: `jq`
+## Code Map
+
+| Symbol | Type | Location | Role |
+|--------|------|----------|------|
+| `App` | Component | `src/app/App.tsx` | Root UI, reducer統合 |
+| `editorReducer` | Function | `src/features/editor/state/reducer.ts` | History付きreducer |
+| `createInitialState` | Function | `src/features/editor/state/initialState.ts` | 初期状態生成 |
+| `renderThumbnail` | Function | `src/features/editor/render/renderer.ts` | Canvas描画 |
+| `exportAndDownload` | Function | `src/features/editor/render/export.ts` | PNG出力 |
+| `validateImageFile` | Function | `src/shared/lib/fileValidation.ts` | 画像検証 |
+
+## Conventions
+
+### State Management
+- React `useReducer` + 独自Historyパターン
+- State types: `src/shared/types/editor.ts`
+- Actions: `SET_*`, `UNDO`, `REDO`, `RESET`
+- Validation actions: `SET_VALIDATION_*`（Historyに記録しない）
+
+### File Naming
+- Components: PascalCase (e.g., `Controls.tsx`)
+- Utilities: camelCase (e.g., `fileValidation.ts`)
+- Barrel file: `index.ts`（state moduleのみ使用）
+
+### Import Patterns
+- 型: `import type { X } from '...'`
+- 相対パス: `../../../shared/types`（深い階層）
+- Vite特別 import: `*.svg?raw`（SVG文字列として）
+
+### Type Safety
+- 厳格 TypeScript: `strict: true`
+- 未使用変数禁止: `noUnusedLocals: true`
+- Enum なし: Union types 使用 (`RatioPreset`, `BackgroundMode`)
+
+### Constants
+- 命名: UPPER_SNAKE_CASE
+- 場所: 型定義ファイルまたは使用箇所の近く
+- 例: `HISTORY_MAX_SIZE`, `MIN_FONT_SIZE`
+
+## Anti-Patterns
+
+- `any` 型の使用
+- `console.log` 本番残留（PWA SW登録は例外）
+- Direct state mutation（immer未使用、スプレッド構文必須）
+
+## Commands
+
+```bash
+# 開発
+bun run dev              # localhost:5173
+
+# ビルド
+bun run build            # dist/ に出力
+bun run preview          # ビルド済みプレビュー
+
+# テスト
+bun run test:unit        # Vitest
+bun run test:e2e         # Playwright
+bun run test:offline     # オフラインE2Eのみ
+
+# 型チェック
+bun run typecheck        # tsc --noEmit
+```
+
+## Tools Selection
+
+- **Find files**: `fd --exclude node_modules "pattern" src`
+- **Find text**: `rg -n "pattern" -g "!node_modules" src`
+- **Find code**: `ast-grep --lang ts -p 'export function $F'`
+- **JSON**: `jq`
+
+## Notes
+
+- PWA対応: `vite-plugin-pwa` 使用、Service Worker自動登録
+- フォント: Noto Sans JP, M PLUS Rounded 1c（ローカル配置）
+- 履歴: JSONシリアライズ可能な状態のみ、max 10件
+- エクスポート: Canvas → PNG ダウンロード
+- Package manager: Bun (`bun install --frozen-lockfile`)
