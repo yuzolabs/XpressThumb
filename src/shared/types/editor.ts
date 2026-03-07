@@ -227,7 +227,7 @@ export type EditorAction =
 
 export const HISTORY_MAX_SIZE = 10;
 
-export const DEFAULT_FONT = 'system-ui, -apple-system, sans-serif';
+export const DEFAULT_FONT = 'Noto Sans JP';
 export const DEFAULT_TEXT_COLOR = '#ffffff';
 export const DEFAULT_BACKGROUND_COLOR = '#1a1a2e';
 export const DEFAULT_PATTERN_COLOR = '#ffffff';

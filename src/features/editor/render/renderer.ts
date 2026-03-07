@@ -355,20 +355,20 @@ function calculateTextPosition(
     case 'top-left':
     case 'top':
     case 'top-right':
-      y = padding + textHeight;
+      y = padding;
       break;
     case 'left':
     case 'center':
     case 'right':
-      y = (canvasHeight + textHeight) / 2;
+      y = (canvasHeight - textHeight) / 2;
       break;
     case 'bottom-left':
     case 'bottom':
     case 'bottom-right':
-      y = canvasHeight - padding;
+      y = canvasHeight - padding - textHeight;
       break;
     default:
-      y = (canvasHeight + textHeight) / 2;
+      y = (canvasHeight - textHeight) / 2;
   }
 
   return { x, y };
@@ -379,27 +379,34 @@ function wrapText(
   text: string,
   maxWidth: number
 ): { lines: string[]; maxLineWidth: number } {
-  const chars = text.split('');
+  const hardLines = text.split('\n');
   const lines: string[] = [];
-  let currentLine = '';
   let maxLineWidth = 0;
 
-  for (const char of chars) {
-    const testLine = currentLine + char;
-    const metrics = ctx.measureText(testLine);
+  for (const hardLine of hardLines) {
+    const chars = hardLine.split('');
+    let currentLine = '';
 
-    if (metrics.width > maxWidth && currentLine.length > 0) {
+    for (const char of chars) {
+      const testLine = currentLine + char;
+      const metrics = ctx.measureText(testLine);
+
+      if (metrics.width > maxWidth && currentLine.length > 0) {
+        lines.push(currentLine);
+        maxLineWidth = Math.max(maxLineWidth, ctx.measureText(currentLine).width);
+        currentLine = char;
+      } else {
+        currentLine = testLine;
+      }
+    }
+
+    if (currentLine.length > 0) {
       lines.push(currentLine);
       maxLineWidth = Math.max(maxLineWidth, ctx.measureText(currentLine).width);
-      currentLine = char;
-    } else {
-      currentLine = testLine;
+    } else if (chars.length === 0) {
+      // Preserve empty lines
+      lines.push('');
     }
-  }
-
-  if (currentLine.length > 0) {
-    lines.push(currentLine);
-    maxLineWidth = Math.max(maxLineWidth, ctx.measureText(currentLine).width);
   }
 
   return { lines, maxLineWidth };
@@ -408,10 +415,11 @@ function wrapText(
 function measureText(
   ctx: CanvasRenderingContext2D,
   config: TextConfig,
-  canvasWidth: number
+  canvasWidth: number,
+  canvasHeight: number
 ): { lines: string[]; width: number; height: number; overflow: boolean } {
   const fontSize = config.size;
-  ctx.font = `bold ${fontSize}px ${config.font}`;
+  ctx.font = `bold ${fontSize}px "${config.font}"`;
   ctx.textBaseline = 'middle';
 
   const maxWidth = canvasWidth - TEXT_PADDING * 2;
@@ -419,7 +427,8 @@ function measureText(
 
   const lineHeight = fontSize * LINE_HEIGHT;
   const totalHeight = lines.length * lineHeight;
-  const overflow = maxLineWidth > maxWidth || lines.length > Math.floor((canvasWidth * 0.8) / lineHeight);
+  const maxHeight = canvasHeight - TEXT_PADDING * 2;
+  const overflow = maxLineWidth > maxWidth || totalHeight > maxHeight;
 
   return {
     lines,
@@ -435,7 +444,7 @@ function renderText(
   width: number,
   height: number
 ): boolean {
-  const { lines, width: textWidth, height: textHeight, overflow } = measureText(ctx, config, width);
+  const { lines, width: textWidth, height: textHeight, overflow } = measureText(ctx, config, width, height);
 
   const position = calculateTextPosition(
     config.position,
@@ -448,8 +457,8 @@ function renderText(
 
   ctx.save();
   ctx.fillStyle = config.color;
-  ctx.font = `bold ${config.size}px ${config.font}`;
-  ctx.textBaseline = 'alphabetic';
+  ctx.font = `bold ${config.size}px "${config.font}"`;
+  ctx.textBaseline = 'top';
 
   const lineHeight = config.size * LINE_HEIGHT;
 

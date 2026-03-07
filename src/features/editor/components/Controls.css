@@ -239,3 +239,13 @@ body {
   transform: translate(4px, 4px);
   box-shadow: 0 0 0 #fff;
 }
+
+.brutal-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(1);
+}
+.brutal-button.disabled:hover {
+  transform: none;
+  box-shadow: 4px 4px 0px var(--neon-cyan);
+}

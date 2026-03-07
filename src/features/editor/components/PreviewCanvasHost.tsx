@@ -1,38 +1,79 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './PreviewCanvasHost.css';
+import { EditorConfig } from '../../../shared/types/editor';
+import { renderThumbnail, areFontsReady, waitForFonts, AssetCache } from '../render/renderer';
 
 interface PreviewCanvasHostProps {
-  state: any;
+  state: EditorConfig;
+  onOverflowChange?: (overflow: boolean) => void;
 }
 
-export const PreviewCanvasHost: React.FC<PreviewCanvasHostProps> = ({ state }) => {
+export const PreviewCanvasHost: React.FC<PreviewCanvasHostProps> = ({ state, onOverflowChange }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [overflow, setOverflow] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const assetsRef = useRef<AssetCache>({ backgroundImage: null, overlayImage: null });
+
+  useEffect(() => {
+    let isActive = true;
+    const render = async () => {
+      if (!canvasRef.current) return;
+      
+      // Ensure fonts are loaded before rendering
+      if (!areFontsReady([state.text.font])) {
+        await waitForFonts([state.text.font]);
+      }
+
+      if (!isActive) return;
+
+      // Sync background image asset if needed
+      if (state.background.mode === 'image' && state.background.objectUrl) {
+        if (assetsRef.current.backgroundImage?.src !== state.background.objectUrl) {
+          const img = new Image();
+          img.src = state.background.objectUrl;
+          await new Promise((resolve) => {
+            img.onload = resolve;
+            img.onerror = resolve;
+          });
+          assetsRef.current.backgroundImage = img;
+        }
+      } else {
+        assetsRef.current.backgroundImage = null;
+      }
+
+      if (!isActive) return;
+
+      const result = renderThumbnail(state, assetsRef.current, canvasRef.current, 'preview');
+      setOverflow(result.textOverflow);
+      setErrorMsg(result.error);
+      if (onOverflowChange) {
+        onOverflowChange(result.textOverflow);
+      }
+    };
+
+    render();
+
+    return () => {
+      isActive = false;
+    };
+  }, [state]);
+
   return (
     <div className="preview-canvas-host">
       <div className="canvas-wrapper" style={{
         aspectRatio: state.ratio.replace(':', '/')
       }}>
-        <div className="placeholder-canvas">
-          <div className="placeholder-info">
-            <span className="info-label">CANVAS_RENDERER_PENDING</span>
-            <div className="debug-state">
-              [STATE_SNAPSHOT]
-              <br />
-              RATIO: {state.ratio}
-              <br />
-              FONT: {state.font} / {state.fontSize}px
-              <br />
-              COLOR: {state.color}
-              <br />
-              POS: {state.position}
-              <br />
-              BG: {state.backgroundMode}
-              <br />
-              TEXTURE: {state.pattern}
-              <br />
-              TEXT: {state.text || 'EMPTY'}
-            </div>
+        <canvas ref={canvasRef} className="preview-canvas" />
+        {errorMsg && (
+          <div className="error-warning" style={{ color: "red", marginTop: "10px" }}>
+            ⚠️ {errorMsg}
           </div>
-        </div>
+        )}
+        {overflow && (
+          <div className="overflow-warning">
+            ⚠️ Text exceeds canvas boundaries. Please reduce font size or text length.
+          </div>
+        )}
       </div>
     </div>
   );

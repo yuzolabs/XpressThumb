@@ -78,9 +78,9 @@ export const ColorSelect: React.FC<BaseControlProps<string>> = ({ value, onChang
       ].map(color => (
         <button
           key={color.name}
-          className={`color-swatch ${value === color.name ? 'active' : ''}`}
+          className={`color-swatch ${value.toLowerCase() === color.hex.toLowerCase() ? 'active' : ''}`}
           style={{ backgroundColor: color.hex }}
-          onClick={() => onChange(color.name)}
+          onClick={() => onChange(color.hex)}
           title={color.name}
         />
       ))}
@@ -90,9 +90,9 @@ export const ColorSelect: React.FC<BaseControlProps<string>> = ({ value, onChang
 
 export const PositionSelect: React.FC<BaseControlProps<string>> = ({ value, onChange }) => {
   const positions = [
-    'top-left', 'top-center', 'top-right',
-    'middle-left', 'middle-center', 'middle-right',
-    'bottom-left', 'bottom-center', 'bottom-right'
+    'top-left', 'top', 'top-right',
+    'left', 'center', 'right',
+    'bottom-left', 'bottom', 'bottom-right'
   ];
 
   return (
@@ -181,13 +181,71 @@ export const ImageUpload: React.FC<{ onUpload: (dataUrl: string) => void }> = ({
   );
 };
 
-export const DownloadButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
+export const DownloadButton: React.FC<{ onClick: () => void; disabled?: boolean }> = ({ onClick, disabled }) => (
   <button 
     data-testid="download-button"
-    className="brutal-button download-button"
+    className={`brutal-button download-button ${disabled ? 'disabled' : ''}`}
     onClick={onClick}
+    disabled={disabled}
   >
     <span className="button-text">EXPORT_IMG</span>
     <span className="button-glitch"></span>
   </button>
 );
+
+export const SolidBackgroundPicker: React.FC<BaseControlProps<string>> = ({ value, onChange }) => (
+  <div className="control-group color-select-group">
+    <label className="control-label">Solid Color</label>
+    <div className="color-swatches" data-testid="solid-bg-picker">
+      {[
+        { name: 'Dark Void', hex: '#1a1a2e' },
+        { name: 'Crimson', hex: '#E63946' },
+        { name: 'Royal Blue', hex: '#1D3557' },
+        { name: 'Forest', hex: '#2A9D8F' },
+        { name: 'Golden', hex: '#E9C46A' },
+        { name: 'White', hex: '#FFFFFF' }
+      ].map(color => (
+        <button
+          key={color.name}
+          className={`color-swatch ${value === color.hex ? 'active' : ''}`}
+          style={{ backgroundColor: color.hex }}
+          onClick={() => onChange(color.hex)}
+          title={color.name}
+        />
+      ))}
+    </div>
+  </div>
+);
+
+export const GradientBackgroundPicker: React.FC<{
+  value: { direction: string, colors: string[] },
+  onChange: (value: { direction: string, colors: string[] }) => void
+}> = ({ value, onChange }) => {
+  const presets = [
+    { id: 'cyberpunk', name: 'Cyberpunk', direction: 'to right', colors: ['#f8049c', '#fdd54f'] },
+    { id: 'ocean', name: 'Deep Ocean', direction: 'to bottom right', colors: ['#2E3192', '#1BFFFF'] },
+    { id: 'sunset', name: 'Sunset', direction: 'to right', colors: ['#ff9966', '#ff5e62'] },
+    { id: 'aurora', name: 'Aurora', direction: 'to bottom', colors: ['#00c6ff', '#0072ff'] },
+    { id: 'neon', name: 'Neon City', direction: 'to right', colors: ['#12c2e9', '#c471ed', '#f64f59'] }
+  ];
+
+  const isSelected = (presetColors: string[]) => 
+    JSON.stringify(presetColors) === JSON.stringify(value.colors);
+
+  return (
+    <div className="control-group color-select-group">
+      <label className="control-label">Gradient Preset</label>
+      <div className="color-swatches" data-testid="gradient-bg-picker">
+        {presets.map(preset => (
+          <button
+            key={preset.id}
+            className={`color-swatch ${isSelected(preset.colors) ? 'active' : ''}`}
+            style={{ background: `linear-gradient(${preset.direction}, ${preset.colors.join(', ')})` }}
+            onClick={() => onChange({ direction: preset.direction, colors: preset.colors })}
+            title={preset.name}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
