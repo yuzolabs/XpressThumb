@@ -3,7 +3,7 @@
   "configVersion": 0,
   "workspaces": {
     "": {
-      "name": "X-article-thumb-generator",
+      "name": "xpress-thumb",
       "dependencies": {
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
