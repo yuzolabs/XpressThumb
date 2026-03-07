@@ -1,4 +1,4 @@
-# my-repository-template
+# X-article-thumb-generator
 
 ## 初期設定
 
@@ -33,8 +33,8 @@ Windows は WSL2 上、Mac の場合は通常の環境にて`opencode auth login
 
 ```txt
 ..
-├── my-repository-template
-└── my-repository-template.worktree
+├── X-article-thumb-generator
+└── X-article-thumb-generator.worktree
     ├── feat-branch1
     └── fix-branch2
 ```
