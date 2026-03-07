@@ -1,5 +1,14 @@
 import type { EditorConfig } from '../../../shared/types/editor.js';
 import { renderThumbnail, type AssetCache } from './renderer.js';
+import dotPatternSvg from '../../../assets/patterns/dot.svg?raw';
+import gridPatternSvg from '../../../assets/patterns/grid.svg?raw';
+import noisePatternSvg from '../../../assets/patterns/noise.svg?raw';
+
+const PATTERNS: Record<string, string> = {
+  dot: dotPatternSvg,
+  grid: gridPatternSvg,
+  noise: noisePatternSvg,
+};
 
 export interface ExportResult {
   success: boolean;
@@ -84,7 +93,8 @@ export async function exportAndDownload(
   assets: AssetCache,
   options: ExportOptions = {}
 ): Promise<ExportResult> {
-  const { filename = 'thumbnail' } = options;
+  const dims = getExportDimensions(state.ratio);
+  const filename = options.filename ?? `thumbnail-${dims.width}x${dims.height}`;
 
   const result = await exportThumbnail(state, assets);
 
@@ -104,4 +114,66 @@ export function getExportDimensions(ratio: EditorConfig['ratio']): {
     '5:2': { width: 1500, height: 600 },
     '1:1': { width: 1200, height: 1200 },
   }[ratio];
+}
+
+/**
+ * Build AssetCache from EditorConfig state
+ * Loads all required images for rendering
+ */
+export async function buildAssetCache(state: EditorConfig): Promise<AssetCache> {
+  const assets: AssetCache = {
+    backgroundImage: null,
+    overlayImage: null,
+    patternImage: null,
+  };
+
+  // Load background image if in image mode
+  if (state.background.mode === 'image' && state.background.objectUrl) {
+    const img = new Image();
+    img.src = state.background.objectUrl;
+    await new Promise<void>((resolve) => {
+      img.onload = () => resolve();
+      img.onerror = () => resolve();
+    });
+    assets.backgroundImage = img;
+  }
+
+  // Load pattern image if pattern is enabled
+  if (state.pattern.type !== 'none' && PATTERNS[state.pattern.type]) {
+    const rawSvg = PATTERNS[state.pattern.type];
+    const coloredSvg = rawSvg.replace(/currentColor/g, state.pattern.color);
+    const dataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(coloredSvg)}`;
+    const img = new Image();
+    img.src = dataUrl;
+    await new Promise<void>((resolve) => {
+      img.onload = () => resolve();
+      img.onerror = () => resolve();
+    });
+    assets.patternImage = img;
+  }
+
+  // Load overlay image if set
+  if (state.overlay.objectUrl) {
+    const img = new Image();
+    img.src = state.overlay.objectUrl;
+    await new Promise<void>((resolve) => {
+      img.onload = () => resolve();
+      img.onerror = () => resolve();
+    });
+    assets.overlayImage = img;
+  }
+
+  return assets;
+}
+
+/**
+ * Export and download with auto-built asset cache
+ * Convenience function that builds assets automatically
+ */
+export async function exportAndDownloadWithAssets(
+  state: EditorConfig,
+  options: ExportOptions = {}
+): Promise<ExportResult> {
+  const assets = await buildAssetCache(state);
+  return exportAndDownload(state, assets, options);
 }

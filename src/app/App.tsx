@@ -3,6 +3,7 @@ import './App.css'
 import { editorReducer } from '../features/editor/state/reducer'
 import { createInitialState } from '../features/editor/state/initialState'
 import { TextPosition } from '../shared/types/editor'
+import { exportAndDownloadWithAssets } from '../features/editor/render/export'
 import {
   RatioSelect,
   TextInput,
@@ -36,13 +37,15 @@ function App() {
 
   const current = state.present;
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (state.validation.textOverflow) {
       alert('Cannot export: Text exceeds canvas boundaries');
       return;
     }
-    console.log('Downloading canvas...', state);
-    alert('Canvas generation pending (Task 6)');
+    const result = await exportAndDownloadWithAssets(current);
+    if (!result.success) {
+      alert(`Export failed: ${result.error}`);
+    }
   };
 
   return (

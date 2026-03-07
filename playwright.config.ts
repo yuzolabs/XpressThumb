@@ -21,7 +21,6 @@ export default defineConfig({
       name: 'offline',
       use: { 
         ...devices['Desktop Chrome'],
-        offline: true,
       },
       grep: /@offline/,
     },

@@ -17,8 +17,9 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "test:unit": "vitest",
+    "test:unit": "vitest --run",
     "test:e2e": "playwright test",
+    "test:all": "bun run test:unit && bun run test:e2e",
     "test:offline": "playwright test --project=offline"
   },
   "devDependencies": {
