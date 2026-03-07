@@ -1,0 +1,94 @@
+.preview-canvas-host {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  box-sizing: border-box;
+  background: repeating-linear-gradient(
+    45deg,
+    #111,
+    #111 10px,
+    #151515 10px,
+    #151515 20px
+  ); /* Blueprint/Grid style background */
+  border-radius: 4px;
+  border: 1px solid #333;
+}
+
+.canvas-wrapper {
+  width: 100%;
+  max-width: 800px;
+  background-color: #000;
+  box-shadow: 0 0 40px rgba(0, 255, 102, 0.1);
+  border: 1px solid #00ff66; /* Neon green border */
+  position: relative;
+  overflow: hidden;
+  transition: aspect-ratio 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.placeholder-canvas {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, #222 0%, #000 100%);
+  position: relative;
+}
+
+.placeholder-canvas::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(rgba(0, 255, 102, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 102, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  pointer-events: none;
+}
+
+.placeholder-info {
+  text-align: center;
+  z-index: 10;
+  color: #00ff66;
+  font-family: var(--font-mono, monospace);
+}
+
+.info-label {
+  display: block;
+  font-size: 1.5rem;
+  letter-spacing: 0.2em;
+  margin-bottom: 2rem;
+  animation: pulse 2s infinite;
+  text-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
+}
+
+.debug-state {
+  text-align: left;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 1rem;
+  border-left: 2px solid #ff00ff; /* Neon magenta accent */
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: #ccc;
+  width: 250px;
+  margin: 0 auto;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; text-shadow: 0 0 20px rgba(0, 255, 102, 0.8); }
+  100% { opacity: 0.5; }
+}
+
+@media (max-width: 768px) {
+  .preview-canvas-host {
+    padding: 1rem;
+  }
+}

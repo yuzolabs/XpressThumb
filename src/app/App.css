@@ -1,71 +1,112 @@
+:root {
+  --color-bg-base: #0a0a0a;
+  --color-panel: #111111;
+  --color-accent: #00ff66; /* Neon green */
+  --color-accent-secondary: #ff00ff; /* Neon magenta */
+  --color-text: #f0f0f0;
+  --color-text-muted: #888888;
+  --border-standard: 1px solid #333;
+  --font-mono: 'Space Mono', 'Courier New', monospace;
+  --font-display: 'Bebas Neue', 'Oswald', sans-serif;
+  --spacing-unit: 8px;
+}
+
+body {
+  background-color: var(--color-bg-base);
+  color: var(--color-text);
+  margin: 0;
+  font-family: var(--font-mono);
+}
+
 .app-shell {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
 .app-header {
-  padding: 1rem 2rem;
+  padding: 1.5rem 2rem;
   background-color: #000;
-  color: #fff;
-  border-bottom: 1px solid #333;
+  color: var(--color-accent);
+  border-bottom: var(--border-standard);
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
 }
 
-.app-header h1 {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
+.header-glitch {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  position: relative;
+  text-transform: uppercase;
 }
 
 .app-main {
   flex: 1;
   display: flex;
   flex-direction: row;
-  padding: 2rem;
-  gap: 2rem;
-  background-color: #f5f5f5;
+  height: calc(100vh - 80px); /* Fill remaining height */
 }
 
 .control-panel {
-  flex: 1;
-  min-width: 300px;
-  max-width: 400px;
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 400px;
+  background-color: var(--color-panel);
+  border-right: var(--border-standard);
+  overflow-y: auto;
+  position: relative;
 }
 
-.control-panel h2 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-  font-size: 1.25rem;
-  color: #333;
+.control-panel-inner {
+  padding: 2rem;
 }
 
 .preview-panel {
-  flex: 2;
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  min-height: 400px;
+  flex: 1;
+  background-color: var(--color-bg-base);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.preview-panel h2 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-  font-size: 1.25rem;
-  color: #333;
+.grid-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
 }
 
-@media (max-width: 768px) {
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-base);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
+}
+
+@media (max-width: 900px) {
   .app-main {
     flex-direction: column;
+    height: auto;
   }
 
   .control-panel {
-    max-width: 100%;
+    width: 100%;
+    border-right: none;
+    border-bottom: var(--border-standard);
+    height: auto;
+    max-height: 50vh;
   }
 }
