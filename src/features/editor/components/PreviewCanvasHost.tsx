@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './PreviewCanvasHost.css';
 import { EditorConfig } from '../../../shared/types/editor';
+import { useMessages } from '../../../shared/i18n';
 import { renderThumbnail, areFontsReady, waitForFonts, AssetCache } from '../render/renderer';
 import dotPatternSvg from '../../../assets/patterns/dot.svg?raw';
 import gridPatternSvg from '../../../assets/patterns/grid.svg?raw';
@@ -18,6 +19,7 @@ interface PreviewCanvasHostProps {
 }
 
 export const PreviewCanvasHost: React.FC<PreviewCanvasHostProps> = ({ state, onOverflowChange }) => {
+  const messages = useMessages();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [overflow, setOverflow] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -110,7 +112,7 @@ export const PreviewCanvasHost: React.FC<PreviewCanvasHostProps> = ({ state, onO
             ref={canvasRef}
             className="preview-canvas"
             role="img"
-            aria-label="Thumbnail preview"
+            aria-label={messages.preview.canvasAriaLabel}
           />
         </div>
       </div>
@@ -136,7 +138,7 @@ export const PreviewCanvasHost: React.FC<PreviewCanvasHostProps> = ({ state, onO
                 <line x1="12" y1="17" x2="12.01" y2="17"></line>
               </svg>
               <span className="status-banner__text">
-                Text exceeds canvas boundaries. Please reduce font size or text length.
+                {messages.preview.overflowWarning}
               </span>
             </div>
           )}
@@ -147,7 +149,7 @@ export const PreviewCanvasHost: React.FC<PreviewCanvasHostProps> = ({ state, onO
         <span className="canvas-dimensions">{state.ratio}</span>
         <span className="canvas-divider">·</span>
         <span className="canvas-status">
-          {hasWarning ? 'Needs attention' : 'Ready to export'}
+          {hasWarning ? messages.preview.statusNeedsAttention : messages.preview.statusReady}
         </span>
       </div>
     </div>
