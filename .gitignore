@@ -1,4 +1,20 @@
+# Dependencies
 node_modules
 .venv
 
+# Build outputs
+dist/
+build/
+*.log
+
+# IDE settings
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Tools
 .sisyphus

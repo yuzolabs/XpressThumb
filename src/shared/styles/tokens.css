@@ -1,0 +1,207 @@
+/**
+ * Design Tokens - Apple HIG Compliant + Editorial Instrument Panel Aesthetic
+ *
+ * Aesthetic Direction: Premium publishing studio feel with Apple-grade clarity
+ * - Light mode: Mist aluminum shell, paper-toned preview, cobalt accent
+ * - Dark mode: Graphite shell, smoke panels, icy blue accent
+ *
+ * Design Principles:
+ * - Clarity: Every element has purpose, clear hierarchy
+ * - Deference: UI supports content, minimal chrome
+ * - Depth: Layered surfaces with purposeful shadows
+ * - Consistency: Unified visual language
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* =============================================================================
+     Typography
+     ============================================================================= */
+
+  /* System Font Stack (SF Pro) */
+  --font-ui: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+  --font-ui-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+
+  /* Content Fonts (Japanese) */
+  --font-content-sans: 'Noto Sans JP', var(--font-ui);
+  --font-content-rounded: 'M PLUS Rounded 1c', var(--font-ui);
+
+  /* Type Scale (Apple HIG) */
+  --text-11: 11px;
+  --text-12: 12px;
+  --text-13: 13px;
+  --text-15: 15px;
+  --text-17: 17px;
+  --text-20: 20px;
+  --text-22: 22px;
+  --text-28: 28px;
+  --text-32: 32px;
+
+  /* Line Heights */
+  --lh-tight: 1.2;
+  --lh-ui: 1.35;
+  --lh-body: 1.5;
+
+  /* =============================================================================
+     Spacing (8pt Grid System)
+     ============================================================================= */
+
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-48: 48px;
+  --space-64: 64px;
+
+  /* =============================================================================
+     Border Radius (Concentric Design)
+     ============================================================================= */
+
+  --radius-8: 8px;
+  --radius-10: 10px;
+  --radius-12: 12px;
+  --radius-16: 16px;
+  --radius-18: 18px;
+  --radius-20: 20px;
+  --radius-24: 24px;
+  --radius-28: 28px;
+  --radius-full: 999px;
+
+  /* =============================================================================
+     Animation
+     ============================================================================= */
+
+  /* Easing Functions (Apple Standard) */
+  --ease-standard: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  /* Durations */
+  --dur-120: 120ms;
+  --dur-180: 180ms;
+  --dur-240: 240ms;
+  --dur-320: 320ms;
+  --dur-480: 480ms;
+
+  /* =============================================================================
+     Colors - Light Mode (Default)
+     ============================================================================= */
+
+  /* Accent Colors */
+  --c-accent: #007aff;
+  --c-accent-strong: #005ecb;
+  --c-accent-soft: rgba(0, 122, 255, 0.14);
+
+  /* System Colors */
+  --c-success: #34c759;
+  --c-warning: #ff9f0a;
+  --c-danger: #ff453a;
+
+  /* Background Hierarchy */
+  --c-bg-app: #f5f5f7;
+  --c-bg-shell: #eef1f5;
+  --c-surface-1: #ffffff;
+  --c-surface-2: #f7f8fa;
+  --c-surface-3: #eceef3;
+
+  /* Preview Stage */
+  --c-stage: #edf2f7;
+  --c-paper: #fbfaf6;
+
+  /* Text Colors */
+  --c-text-1: #111114;
+  --c-text-2: #6e6e73;
+  --c-text-3: #8a8a90;
+
+  /* Borders */
+  --c-border-1: rgba(17, 17, 20, 0.08);
+  --c-border-2: rgba(17, 17, 20, 0.14);
+
+  /* Shadows */
+  --shadow-panel: 0 1px 2px rgba(15, 23, 42, 0.05), 0 18px 48px rgba(15, 23, 42, 0.08);
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.05), 0 8px 24px rgba(15, 23, 42, 0.06);
+  --shadow-stage: 0 24px 72px rgba(15, 23, 42, 0.14);
+  --shadow-focus: 0 0 0 4px var(--c-accent-soft);
+}
+
+/* =============================================================================
+   Colors - Dark Mode
+   ============================================================================= */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Accent Colors */
+    --c-accent: #0a84ff;
+    --c-accent-strong: #409cff;
+    --c-accent-soft: rgba(10, 132, 255, 0.2);
+
+    /* System Colors */
+    --c-success: #30d158;
+    --c-warning: #ffd60a;
+    --c-danger: #ff453a;
+
+    /* Background Hierarchy */
+    --c-bg-app: #101114;
+    --c-bg-shell: #16171b;
+    --c-surface-1: #1c1d22;
+    --c-surface-2: #24262c;
+    --c-surface-3: #2d3038;
+
+    /* Preview Stage */
+    --c-stage: #181b20;
+    --c-paper: #15161a;
+
+    /* Text Colors */
+    --c-text-1: #f5f5f7;
+    --c-text-2: #b2b4bd;
+    --c-text-3: #8c8f99;
+
+    /* Borders */
+    --c-border-1: rgba(255, 255, 255, 0.08);
+    --c-border-2: rgba(255, 255, 255, 0.14);
+
+    /* Shadows */
+    --shadow-panel: 0 1px 2px rgba(0, 0, 0, 0.36), 0 24px 64px rgba(0, 0, 0, 0.34);
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.28), 0 10px 28px rgba(0, 0, 0, 0.24);
+    --shadow-stage: 0 28px 80px rgba(0, 0, 0, 0.42);
+  }
+}
+
+/* =============================================================================
+   Reduced Motion
+   ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =============================================================================
+   High Contrast Mode
+   ============================================================================= */
+
+@media (prefers-contrast: high) {
+  :root {
+    --c-border-1: rgba(17, 17, 20, 0.25);
+    --c-border-2: rgba(17, 17, 20, 0.4);
+    --shadow-focus: 0 0 0 3px var(--c-accent);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --c-border-1: rgba(255, 255, 255, 0.2);
+      --c-border-2: rgba(255, 255, 255, 0.35);
+    }
+  }
+}

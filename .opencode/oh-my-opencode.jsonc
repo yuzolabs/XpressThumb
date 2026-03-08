@@ -2,40 +2,36 @@
   "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json",
   "agents": {
     "sisyphus": {
-      "model": "github-copilot/claude-opus-4.6",
-      "variant": "max"
+      "model": "kimi-for-coding/k2p5"
     },
     "hephaestus": {
-      "model": "github-copilot/gpt-5.2-codex",
-      "variant": "medium"
+      "model": "github-copilot/gpt-5.4",
+      "variant": "high"
     },
     "oracle": {
-      "model": "github-copilot/gpt-5.2",
-      "variant": "high"
+      "model": "kimi-for-coding/k2p5"
     },
     "librarian": {
       "model": "zai-coding-plan/glm-4.7"
     },
     "explore": {
-      "model": "github-copilot/gpt-5-mini"
+      "model": "zai-coding-plan/glm-4.7"
     },
     "multimodal-looker": {
-      "model": "github-copilot/gemini-3-flash-preview"
+      "model": "kimi-for-coding/k2p5"
     },
     "prometheus": {
-      "model": "github-copilot/claude-opus-4.6",
-      "variant": "max"
+      "model": "github-copilot/gpt-5.4",
+      "variant": "high"
     },
     "metis": {
-      "model": "github-copilot/claude-opus-4.6",
-      "variant": "max"
+      "model": "kimi-for-coding/k2p5"
     },
     "momus": {
-      "model": "github-copilot/gpt-5.2",
-      "variant": "medium"
+      "model": "kimi-for-coding/k2p5"
     },
     "atlas": {
-      "model": "github-copilot/claude-sonnet-4.6"
+      "model": "kimi-for-coding/k2p5"
     }
   },
   "categories": {
@@ -44,25 +40,23 @@
       "variant": "high"
     },
     "ultrabrain": {
-      "model": "github-copilot/gpt-5.2-codex",
-      "variant": "xhigh"
+      "model": "kimi-for-coding/k2p5"
     },
     "deep": {
-      "model": "github-copilot/gpt-5.2-codex",
-      "variant": "medium"
+      "model": "kimi-for-coding/k2p5"
     },
     "artistry": {
       "model": "github-copilot/gemini-3.1-pro-preview",
       "variant": "high"
     },
     "quick": {
-      "model": "github-copilot/claude-haiku-4.5"
+      "model": "zai-coding-plan/glm-4.7"
     },
     "unspecified-low": {
-      "model": "github-copilot/claude-sonnet-4.6"
+      "model": "kimi-for-coding/k2p5"
     },
     "unspecified-high": {
-      "model": "github-copilot/claude-sonnet-4.6"
+      "model": "kimi-for-coding/k2p5"
     },
     "writing": {
       "model": "kimi-for-coding/k2p5"

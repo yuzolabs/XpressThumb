@@ -1,20 +1,42 @@
 {
-  "name": "my-repository-template",
+  "name": "xpress-thumb",
   "version": "0.1.0",
-  "description": "GitHubのテンプレートリポジトリ",
+  "description": "XpressThumb - Generate beautiful thumbnails for X (Twitter)",
   "private": true,
   "packageManager": "bun@1.3.6",
   "trustedDependencies": [
     "@ast-grep/cli",
     "@code-yeongyu/comment-checker"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test:unit": "vitest --run",
+    "test:e2e": "playwright test",
+    "test:all": "bun run test:unit && bun run test:e2e",
+    "test:offline": "playwright test --project=offline"
+  },
   "devDependencies": {
-    "oh-my-opencode": "^3.8.5",
+    "@playwright/test": "^1.58.2",
     "@textlint-ja/textlint-rule-preset-ai-writing": "^1.6.1",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "jsdom": "^28.1.0",
     "markdownlint-cli2": "^0.18.1",
+    "oh-my-opencode": "^3.11.1",
     "textlint": "^15.3.0",
     "textlint-rule-ja-space-between-half-and-full-width": "^2.4.2",
-    "textlint-rule-preset-ja-technical-writing": "^12.0.2"
+    "textlint-rule-preset-ja-technical-writing": "^12.0.2",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.0",
+    "vite-plugin-pwa": "^1.2.0",
+    "vitest": "^4.0.18"
   }
 }
