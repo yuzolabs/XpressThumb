@@ -195,7 +195,7 @@ export const getImageBackgroundConfig = (state: EditorState):
  */
 export const hasBackgroundImage = (state: EditorState): boolean =>
   state.present.background.mode === 'image' &&
-  state.present.background.objectUrl !== null;
+  !!state.present.background.objectUrl;
 
 // =============================================================================
 // Pattern Selectors
@@ -257,7 +257,7 @@ export const getOverlayObjectUrl = (state: EditorState): string | null =>
  * Check if overlay image is set
  */
 export const hasOverlay = (state: EditorState): boolean =>
-  state.present.overlay.objectUrl !== null;
+  !!state.present.overlay.objectUrl;
 
 /**
  * Get overlay size

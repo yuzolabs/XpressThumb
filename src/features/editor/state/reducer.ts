@@ -99,7 +99,7 @@ function applyAction(state: EditorConfig, action: EditorAction): EditorConfig {
         case 'image':
           background = {
             mode: 'image',
-            objectUrl: '',
+            objectUrl: null,
             fit: 'cover',
           };
           break;
@@ -133,7 +133,7 @@ function applyAction(state: EditorConfig, action: EditorAction): EditorConfig {
       if (state.background.mode !== 'image') return state;
       return {
         ...state,
-        background: { ...state.background, objectUrl: action.payload || '' },
+        background: { ...state.background, objectUrl: action.payload },
       };
 
     case 'SET_BACKGROUND_IMAGE_FIT':
@@ -176,7 +176,7 @@ function applyAction(state: EditorConfig, action: EditorAction): EditorConfig {
     case 'SET_OVERLAY_OBJECT_URL':
       return {
         ...state,
-        overlay: { ...state.overlay, objectUrl: action.payload || '' },
+        overlay: { ...state.overlay, objectUrl: action.payload },
       };
 
     case 'SET_OVERLAY_SIZE':
@@ -208,7 +208,6 @@ function applyAction(state: EditorConfig, action: EditorAction): EditorConfig {
 
     case 'RESET':
       return { ...defaultEditorConfig };
-      return { ...defaultEditorConfig };
 
     default:
       return state;
@@ -224,9 +223,6 @@ function isHistoryAction(action: EditorAction): boolean {
     return false;
   }
   // Undo/Redo don't create history entries
-  if (['UNDO', 'REDO'].includes(action.type)) {
-    return false;
-  }
   if (['UNDO', 'REDO'].includes(action.type)) {
     return false;
   }

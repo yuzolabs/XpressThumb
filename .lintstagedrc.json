@@ -1,4 +1,4 @@
 {
   "*.{ts,tsx}": ["tsc --noEmit", "vitest --run"],
-  "*.{js,ts,tsx,json,md}": ["prettier --write"]
+  "*.{js,ts,tsx,json,md}": ["bunx prettier --write"]
 }

@@ -99,7 +99,7 @@ export interface GradientBackground {
 export interface ImageBackground {
   mode: 'image';
   /** Object URL reference (stored in cache, not state) */
-  objectUrl: string;
+  objectUrl: string | null;
   /** Image fit mode */
   fit: 'cover' | 'contain' | 'stretch';
 }

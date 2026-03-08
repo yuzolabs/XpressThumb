@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   renderThumbnail,
   getCanvasDimensions,
@@ -81,6 +81,7 @@ describe('Renderer', () => {
   const emptyAssets: AssetCache = {
     backgroundImage: null,
     overlayImage: null,
+    patternImage: null,
   };
 
   beforeEach(() => {
@@ -217,6 +218,7 @@ describe('Renderer', () => {
       const assets: AssetCache = {
         backgroundImage: null,
         overlayImage: mockImage,
+        patternImage: null,
       };
 
       const result = renderThumbnail(config, assets, canvas, 'preview');
