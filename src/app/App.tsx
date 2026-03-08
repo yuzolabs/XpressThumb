@@ -53,8 +53,8 @@ function App() {
     <div className="app-shell" data-testid="app-shell">
       <header className="app-header">
         <div className="app-header-content">
-          <h1 className="app-title">Thumbnail Studio</h1>
-          <p className="app-subtitle">Create beautiful X article thumbnails</p>
+          <h1 className="app-title">XpressThumb</h1>
+          <p className="app-subtitle">Express thumbnail creation for X articles</p>
         </div>
       </header>
 
