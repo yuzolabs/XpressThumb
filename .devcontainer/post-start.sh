@@ -1,9 +1,9 @@
 #!/bin/bash
 set -e
 
-MAIN=/workspaces/X-article-thumb-generator
+MAIN=/workspaces/XpressThumb
 WT_NAME=${1:-$localWorkspaceFolderBasename}
-WT=/workspaces/X-article-thumb-generator.worktrees/$WT_NAME
+WT=/workspaces/XpressThumb.worktrees/$WT_NAME
 
 # 検証と早期終了
 [ -n "$WT_NAME" ] || { echo "Error: Worktree name not provided" >&2; exit 1; }
