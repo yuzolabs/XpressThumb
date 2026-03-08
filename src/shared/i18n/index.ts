@@ -281,8 +281,14 @@ export function resolveLocale(language: string | null | undefined): SupportedLoc
   return 'en'
 }
 
-export function getBrowserLocale(language = typeof navigator === 'undefined' ? undefined : navigator.language): SupportedLocale {
-  return resolveLocale(language)
+/**
+ * Resolve the browser locale.
+ * The optional language argument exists to make locale detection easy to test.
+ */
+export function getBrowserLocale(language?: string): SupportedLocale {
+  const browserLanguage = language ?? (typeof navigator === 'undefined' ? undefined : navigator.language)
+
+  return resolveLocale(browserLanguage)
 }
 
 export function getMessages(locale: SupportedLocale): MessageCatalog {

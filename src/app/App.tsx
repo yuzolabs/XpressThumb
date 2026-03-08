@@ -27,7 +27,8 @@ import { PreviewCanvasHost } from '../features/editor/components/PreviewCanvasHo
 function App() {
   const locale = useMemo(() => getBrowserLocale(), [])
   const messages = useMemo(() => getMessages(locale), [locale])
-  const [state, dispatch] = useReducer(editorReducer, locale, createInitialState)
+  const initialState = useMemo(() => createInitialState(locale), [locale])
+  const [state, dispatch] = useReducer(editorReducer, initialState)
 
   useEffect(() => {
     document.documentElement.lang = locale

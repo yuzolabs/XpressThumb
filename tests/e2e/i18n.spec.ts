@@ -1,6 +1,11 @@
 import { expect, test, type Browser } from '@playwright/test'
 
-async function createLocalizedPage(browser: Browser, locale: string) {
+type LocalizedPage = {
+  context: Awaited<ReturnType<Browser['newContext']>>
+  page: Awaited<ReturnType<Awaited<ReturnType<Browser['newContext']>>['newPage']>>
+}
+
+async function createLocalizedPage(browser: Browser, locale: string): Promise<LocalizedPage> {
   const context = await browser.newContext({ locale })
   const page = await context.newPage()
   await page.goto('/')
