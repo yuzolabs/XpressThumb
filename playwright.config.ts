@@ -10,7 +10,7 @@ export default defineConfig({
   timeout: 30000,
   reporter: 'list',
   use: {
-    baseURL: 'http://localhost:4173',
+    baseURL: 'http://localhost:4173/XpressThumb/',
     trace: 'on-first-retry',
     actionTimeout: 10000,
     navigationTimeout: 10000,
@@ -22,7 +22,7 @@ export default defineConfig({
     },
     {
       name: 'offline',
-      use: { 
+      use: {
         ...devices['Desktop Chrome'],
       },
       grep: /@offline/,

@@ -2,7 +2,10 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
+const APP_BASE_PATH = '/XpressThumb/'
+
 export default defineConfig({
+  base: APP_BASE_PATH,
   plugins: [
     react(),
     VitePWA({

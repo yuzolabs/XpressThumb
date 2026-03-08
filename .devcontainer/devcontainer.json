@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/debian
 {
-	"name": "X-article-thumb-generator",
+	"name": "XpressThumb",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"build": {
 		"dockerfile": "Dockerfile",
@@ -37,10 +37,10 @@
 	},
 	"mounts": [
 		"source=${localEnv:HOME}/.local/share/opencode/auth.json,target=/home/node/.local/share/opencode/auth.json,type=bind,readonly",
-		"source=${localWorkspaceFolder}/../../X-article-thumb-generator,target=/workspaces/X-article-thumb-generator,type=bind"
+		"source=${localWorkspaceFolder}/../../XpressThumb,target=/workspaces/XpressThumb,type=bind"
 	],
-	"workspaceMount": "source=${localWorkspaceFolder}/..,target=/workspaces/X-article-thumb-generator.worktrees,type=bind",
-	"workspaceFolder": "/workspaces/X-article-thumb-generator.worktrees/${localWorkspaceFolderBasename}",
+	"workspaceMount": "source=${localWorkspaceFolder}/..,target=/workspaces/XpressThumb.worktrees,type=bind",
+	"workspaceFolder": "/workspaces/XpressThumb.worktrees/${localWorkspaceFolderBasename}",
 	"postStartCommand": "${containerWorkspaceFolder}/.devcontainer/post-start.sh ${localWorkspaceFolderBasename}",
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	"remoteUser": "node"
