@@ -11,7 +11,7 @@ test.describe('PNG export @export', () => {
       const notoSansReady = document.fonts.check('16px "Noto Sans JP"')
       const mPlusRoundedReady = document.fonts.check('16px "M PLUS Rounded 1c"')
       return notoSansReady && mPlusRoundedReady
-    }, { timeout: 10000 })
+    }, { timeout: 5000 })
   })
 
   test('download button generates correct PNG for 16:9 ratio', async ({ page }) => {
@@ -137,14 +137,10 @@ test.describe('PNG export @export', () => {
   test('export is disabled when text overflows', async ({ page }) => {
     // Set a very long text that will overflow
     await page.getByTestId('text-input').fill('A'.repeat(500))
-    
-    // Wait for overflow detection
-    await page.waitForTimeout(500)
-    
-    // Check that overflow warning is shown
-    const overflowWarning = await page.locator('.overflow-warning').isVisible()
-    expect(overflowWarning).toBe(true)
-    
+
+    // Wait for overflow warning to appear
+    await page.waitForSelector('[data-testid="overflow-warning"]', { timeout: 5000 })
+
     // Check that download button is disabled
     const downloadButton = page.getByTestId('download-button')
     await expect(downloadButton).toBeDisabled()
@@ -153,10 +149,10 @@ test.describe('PNG export @export', () => {
   test('export is enabled when text does not overflow', async ({ page }) => {
     // Set normal text
     await page.getByTestId('text-input').fill('Normal text')
-    
-    // Wait for render
-    await page.waitForTimeout(500)
-    
+
+    // Wait for canvas to be ready and check button is enabled
+    await page.waitForSelector('[data-testid="download-button"]:enabled', { timeout: 5000 })
+
     // Check that download button is enabled
     const downloadButton = page.getByTestId('download-button')
     await expect(downloadButton).toBeEnabled()

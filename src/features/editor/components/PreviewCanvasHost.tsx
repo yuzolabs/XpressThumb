@@ -102,7 +102,8 @@ export const PreviewCanvasHost: React.FC<PreviewCanvasHostProps> = ({ state, onO
     <div className="preview-canvas-host" data-testid="preview-canvas-host">
       <div className="canvas-stage">
         <div
-          className="canvas-frame"
+          className="canvas-frame canvas-wrapper"
+          data-testid="canvas-wrapper"
           style={{ aspectRatio: state.ratio.replace(':', '/') }}
         >
           <canvas
@@ -128,7 +129,7 @@ export const PreviewCanvasHost: React.FC<PreviewCanvasHostProps> = ({ state, onO
           )}
 
           {overflow && (
-            <div className="status-banner status-banner--warning" role="alert">
+            <div className="status-banner status-banner--warning overflow-warning" data-testid="overflow-warning" role="alert">
               <svg className="status-banner__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
                 <line x1="12" y1="9" x2="12" y2="13"></line>

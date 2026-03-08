@@ -159,7 +159,7 @@ export const PositionSelect: React.FC<BaseControlProps<string>> = ({ value, onCh
 };
 
 export const BackgroundModeSelect: React.FC<BaseControlProps<string>> = ({ value, onChange }) => (
-  <div className="control-group bg-mode-group">
+  <div className="control-group bg-mode-group" data-testid="background-mode-select">
     <label className="control-label">Mode</label>
     <div
       className="segmented-control"
@@ -187,7 +187,7 @@ export const BackgroundModeSelect: React.FC<BaseControlProps<string>> = ({ value
 );
 
 export const PatternSelect: React.FC<BaseControlProps<string>> = ({ value, onChange }) => (
-  <div className="control-group pattern-select-group">
+  <div className="control-group pattern-select-group" data-testid="pattern-select">
     <label className="control-label">Texture</label>
     <div
       className="pattern-chips"

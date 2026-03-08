@@ -7,7 +7,7 @@ test('basic test', async ({ page }) => {
 
 test.describe('offline mode @offline', () => {
   test('app loads and works offline with all assets', async ({ page }) => {
-    test.setTimeout(60000)
+    test.setTimeout(30000)
     
     // Navigate to the app
     await page.goto('/')
@@ -22,7 +22,7 @@ test.describe('offline mode @offline', () => {
       } catch (e) {
         return false
       }
-    }, { timeout: 30000 })
+    }, { timeout: 15000 })
 
     // Wait for all fonts to be loaded with retry
     await page.waitForFunction(async () => {
@@ -30,7 +30,7 @@ test.describe('offline mode @offline', () => {
       const notoSansReady = document.fonts.check('16px "Noto Sans JP"')
       const mPlusRoundedReady = document.fonts.check('16px "M PLUS Rounded 1c"')
       return notoSansReady && mPlusRoundedReady
-    }, { timeout: 10000 })
+    }, { timeout: 5000 })
 
     // Wait for cache to be populated
     await page.waitForFunction(async () => {
@@ -46,7 +46,7 @@ test.describe('offline mode @offline', () => {
         return false
       }
       return false
-    }, { timeout: 10000 })
+    }, { timeout: 5000 })
 
     // Simulate offline mode by intercepting network requests
     await page.route('**/*', (route) => {
@@ -69,7 +69,7 @@ test.describe('offline mode @offline', () => {
       const notoSansReady = document.fonts.check('16px "Noto Sans JP"')
       const mPlusRoundedReady = document.fonts.check('16px "M PLUS Rounded 1c"')
       return notoSansReady && mPlusRoundedReady
-    }, { timeout: 10000 })
+    }, { timeout: 5000 })
 
     // Verify app is still functional after reload
     const appFunctional = await page.evaluate(() => {
@@ -80,7 +80,7 @@ test.describe('offline mode @offline', () => {
   })
 
   test('service worker precaches all required assets', async ({ page }) => {
-    test.setTimeout(60000)
+    test.setTimeout(30000)
 
     await page.goto('/')
 
@@ -102,7 +102,7 @@ test.describe('offline mode @offline', () => {
         return false
       }
       return false
-    }, { timeout: 30000 })
+    }, { timeout: 15000 })
 
     // Get list of cached assets from service worker
     const cachedAssets = await page.evaluate(async () => {
@@ -142,10 +142,10 @@ test.describe('export functionality @export', () => {
     await expect(page).toHaveTitle(/X/)
 
     // Wait for canvas to be ready
-    await page.waitForSelector('.preview-canvas-host', { timeout: 10000 })
+    await page.waitForSelector('[data-testid="preview-canvas-host"]', { timeout: 5000 })
 
     // Set up download listener
-    const downloadPromise = page.waitForEvent('download', { timeout: 10000 })
+    const downloadPromise = page.waitForEvent('download', { timeout: 5000 })
 
     // Click export button
     await page.click('[data-testid="download-button"]')
@@ -162,13 +162,13 @@ test.describe('export functionality @export', () => {
     await expect(page).toHaveTitle(/X/)
 
     // Wait for canvas to be ready
-    await page.waitForSelector('.preview-canvas-host', { timeout: 10000 })
+    await page.waitForSelector('[data-testid="preview-canvas-host"]', { timeout: 5000 })
 
     // Enter very long text to trigger overflow
     await page.fill('[data-testid="text-input"]', 'A'.repeat(500))
 
     // Wait for overflow warning to appear
-    await page.waitForSelector('.overflow-warning', { timeout: 5000 })
+    await page.waitForSelector('[data-testid="overflow-warning"]', { timeout: 5000 })
 
     // Verify export button is disabled
     const downloadButton = await page.locator('[data-testid="download-button"]')
@@ -182,23 +182,22 @@ test.describe('layer switching @layers', () => {
     await expect(page).toHaveTitle(/X/)
 
     // Wait for canvas to be ready
-    await page.waitForSelector('.preview-canvas-host', { timeout: 10000 })
+    await page.waitForSelector('[data-testid="preview-canvas-host"]', { timeout: 5000 })
 
-    // Switch to gradient mode
-    await page.selectOption('[data-testid="background-mode-select"]', 'gradient')
+    // Switch to gradient mode by clicking the button
+    await page.click('[data-testid="background-mode-select"] button:has-text("Gradient")')
     await page.waitForSelector('[data-testid="gradient-bg-picker"]', { timeout: 5000 })
 
-    // Switch to image mode
-    await page.selectOption('[data-testid="background-mode-select"]', 'image')
-    // Switch to image mode - look for the visible upload container
-    await page.selectOption('[data-testid="background-mode-select"]', 'image')
+    // Switch to image mode by clicking the button
+    await page.click('[data-testid="background-mode-select"] button:has-text("Image")')
     await page.waitForSelector('.upload-container', { timeout: 5000 })
-    // Switch back to solid mode
-    await page.selectOption('[data-testid="background-mode-select"]', 'solid')
+
+    // Switch back to solid mode by clicking the button
+    await page.click('[data-testid="background-mode-select"] button:has-text("Solid")')
     await page.waitForSelector('[data-testid="solid-bg-picker"]', { timeout: 5000 })
 
     // Verify canvas is still rendering
-    const canvasVisible = await page.isVisible('.preview-canvas-host')
+    const canvasVisible = await page.isVisible('[data-testid="preview-canvas-host"]')
     expect(canvasVisible).toBe(true)
   })
 
@@ -207,24 +206,24 @@ test.describe('layer switching @layers', () => {
     await expect(page).toHaveTitle(/X/)
 
     // Wait for canvas to be ready
-    await page.waitForSelector('.preview-canvas-host', { timeout: 10000 })
+    await page.waitForSelector('[data-testid="preview-canvas-host"]', { timeout: 5000 })
 
-    // Test each pattern type
-    const patterns = ['noise', 'dot', 'grid']
+    // Test each pattern type by clicking buttons
+    const patterns = [
+      { value: 'noise', label: 'Noise' },
+      { value: 'dot', label: 'Dot' },
+      { value: 'grid', label: 'Grid' }
+    ]
     for (const pattern of patterns) {
-      await page.selectOption('[data-testid="pattern-select"]', pattern)
-      // Wait a bit for pattern to apply
-      await page.waitForTimeout(500)
+      await page.click(`[data-testid="pattern-select"] button:has-text("${pattern.label}")`)
 
       // Verify opacity slider appears for non-none patterns
-      if (pattern !== 'none') {
-        const opacityVisible = await page.isVisible('[data-testid="pattern-opacity-slider"]')
-        expect(opacityVisible).toBe(true)
-      }
+      const opacityVisible = await page.isVisible('[data-testid="pattern-opacity-slider"]')
+      expect(opacityVisible).toBe(true)
     }
 
     // Switch back to none
-    await page.selectOption('[data-testid="pattern-select"]', 'none')
+    await page.click('[data-testid="pattern-select"] button:has-text("None")')
     const opacityGone = await page.locator('[data-testid="pattern-opacity-slider"]').count() === 0
     expect(opacityGone).toBe(true)
   })
@@ -234,16 +233,15 @@ test.describe('layer switching @layers', () => {
     await expect(page).toHaveTitle(/X/)
 
     // Wait for canvas to be ready
-    await page.waitForSelector('.preview-canvas-host', { timeout: 10000 })
+    await page.waitForSelector('[data-testid="preview-canvas-host"]', { timeout: 5000 })
 
     // Get initial canvas dimensions
-    const canvasWrapper = await page.locator('.canvas-wrapper')
+    const canvasWrapper = await page.locator('[data-testid="canvas-wrapper"]')
 
     // Test each ratio
     const ratios = ['1:1', '5:2', '16:9']
     for (const ratio of ratios) {
       await page.click(`button:has-text("${ratio}")`)
-      await page.waitForTimeout(500)
 
       // Verify canvas wrapper has correct aspect ratio style (CSS may add spaces)
       const aspectRatio = await canvasWrapper.evaluate(el => el.style.aspectRatio)
@@ -258,14 +256,14 @@ test.describe('evidence screenshots @evidence', () => {
     await expect(page).toHaveTitle(/X/)
 
     // Wait for app to be fully loaded
-    await page.waitForSelector('[data-testid="app-shell"]', { timeout: 10000 })
-    await page.waitForSelector('.preview-canvas-host', { timeout: 10000 })
+    await page.waitForSelector('[data-testid="app-shell"]', { timeout: 5000 })
+    await page.waitForSelector('[data-testid="preview-canvas-host"]', { timeout: 5000 })
 
     // Wait for fonts to be ready
     await page.waitForFunction(async () => {
       await document.fonts.ready
       return document.fonts.check('16px "Noto Sans JP"')
-    }, { timeout: 10000 })
+    }, { timeout: 5000 })
 
     // Take screenshot
     await page.screenshot({
@@ -279,25 +277,24 @@ test.describe('evidence screenshots @evidence', () => {
     await expect(page).toHaveTitle(/X/)
 
     // Wait for app to be fully loaded
-    await page.waitForSelector('[data-testid="app-shell"]', { timeout: 10000 })
-    await page.waitForSelector('.preview-canvas-host', { timeout: 10000 })
+    await page.waitForSelector('[data-testid="app-shell"]', { timeout: 5000 })
+    await page.waitForSelector('[data-testid="preview-canvas-host"]', { timeout: 5000 })
 
-    // Switch to gradient background
-    await page.selectOption('[data-testid="background-mode-select"]', 'gradient')
+    // Switch to gradient background by clicking the button
+    await page.click('[data-testid="background-mode-select"] button:has-text("Gradient")')
 
     // Wait for gradient picker and select a gradient
     await page.waitForSelector('[data-testid="gradient-bg-picker"]', { timeout: 5000 })
     await page.click('[data-testid="gradient-bg-picker"] button:first-child')
 
-    // Add a pattern
-    await page.selectOption('[data-testid="pattern-select"]', 'noise')
-    await page.waitForTimeout(500)
+    // Add a pattern by clicking the button
+    await page.click('[data-testid="pattern-select"] button:has-text("Noise")')
 
     // Wait for fonts to be ready
     await page.waitForFunction(async () => {
       await document.fonts.ready
       return document.fonts.check('16px "Noto Sans JP"')
-    }, { timeout: 10000 })
+    }, { timeout: 5000 })
 
     // Take screenshot
     await page.screenshot({
@@ -311,19 +308,19 @@ test.describe('evidence screenshots @evidence', () => {
     await expect(page).toHaveTitle(/X/)
 
     // Wait for app to be fully loaded
-    await page.waitForSelector('[data-testid="app-shell"]', { timeout: 10000 })
-    await page.waitForSelector('.preview-canvas-host', { timeout: 10000 })
+    await page.waitForSelector('[data-testid="app-shell"]', { timeout: 5000 })
+    await page.waitForSelector('[data-testid="preview-canvas-host"]', { timeout: 5000 })
 
     // Configure some settings
     await page.fill('[data-testid="text-input"]', 'Export Test Article')
-    await page.selectOption('[data-testid="background-mode-select"]', 'gradient')
+    await page.click('[data-testid="background-mode-select"] button:has-text("Gradient")')
     await page.click('[data-testid="gradient-bg-picker"] button:first-child')
 
     // Wait for fonts to be ready
     await page.waitForFunction(async () => {
       await document.fonts.ready
       return document.fonts.check('16px "Noto Sans JP"')
-    }, { timeout: 10000 })
+    }, { timeout: 5000 })
 
     // Take screenshot showing the export button
     await page.screenshot({
@@ -333,7 +330,7 @@ test.describe('evidence screenshots @evidence', () => {
   })
 
   test('capture offline test screenshot', async ({ page }) => {
-    test.setTimeout(60000)
+    test.setTimeout(30000)
 
     await page.goto('/')
     await expect(page).toHaveTitle(/X/)
@@ -347,7 +344,7 @@ test.describe('evidence screenshots @evidence', () => {
       } catch (e) {
         return false
       }
-    }, { timeout: 30000 })
+    }, { timeout: 15000 })
 
     // Wait for cache to be populated
     await page.waitForFunction(async () => {
@@ -362,7 +359,7 @@ test.describe('evidence screenshots @evidence', () => {
         return false
       }
       return false
-    }, { timeout: 10000 })
+    }, { timeout: 5000 })
 
     // Take screenshot
     await page.screenshot({
