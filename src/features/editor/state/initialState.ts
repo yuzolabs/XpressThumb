@@ -13,6 +13,7 @@ import {
   DEFAULT_PATTERN_COLOR,
   DEFAULT_FONT_SIZE,
 } from '../../../shared/types/editor.js';
+import { getDefaultTitle, type SupportedLocale } from '../../../shared/i18n/index';
 
 /**
  * Default text configuration
@@ -92,10 +93,16 @@ export const initialState: EditorState = {
 /**
  * Create a fresh initial state (useful for reset)
  */
-export function createInitialState(): EditorState {
+export function createInitialState(locale: SupportedLocale = 'en'): EditorState {
   return {
     past: [],
-    present: { ...defaultEditorConfig },
+    present: {
+      ...defaultEditorConfig,
+      text: {
+        ...defaultEditorConfig.text,
+        title: getDefaultTitle(locale),
+      },
+    },
     future: [],
     validation: { ...defaultValidationState },
   };
