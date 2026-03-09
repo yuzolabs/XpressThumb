@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useReducer, useState, useCallback } from 'react'
+import { useLayoutEffect, useMemo, useReducer, useState, useCallback } from 'react'
 import './App.css'
 import '../shared/styles/tokens.css'
 import { editorReducer } from '../features/editor/state/reducer'
@@ -27,15 +27,14 @@ import { PreviewCanvasHost } from '../features/editor/components/PreviewCanvasHo
 function App() {
   const [locale, setLocale] = useState<SupportedLocale>(() => getInitialLocale())
   const messages = useMemo(() => getMessages(locale), [locale])
-  const initialState = useMemo(() => createInitialState(locale), [locale])
-  const [state, dispatch] = useReducer(editorReducer, initialState)
+  const [state, dispatch] = useReducer(editorReducer, locale, createInitialState)
 
   const handleLocaleChange = useCallback((newLocale: SupportedLocale) => {
     setLocale(newLocale)
     setStoredLocale(newLocale)
   }, [])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.documentElement.lang = locale
   }, [locale])
 
