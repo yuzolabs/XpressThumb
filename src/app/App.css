@@ -44,8 +44,16 @@ body {
   width: 100%;
   margin: 0 auto;
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-16);
+}
+
+.app-header-branding {
+  display: flex;
   align-items: baseline;
   gap: var(--space-12);
+  flex: 1;
 }
 
 .app-title {
@@ -280,5 +288,52 @@ textarea,
   .preview-panel {
     min-height: 280px;
     border-radius: var(--radius-16);
+  }
+}
+
+.language-selector {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background-color: var(--c-surface-2);
+  border-radius: var(--radius-10);
+  border: 1px solid var(--c-border-1);
+}
+
+.language-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 32px;
+  padding: 0 var(--space-12);
+  font-family: var(--font-ui);
+  font-size: var(--text-13);
+  font-weight: 500;
+  color: var(--c-text-2);
+  background-color: transparent;
+  border: none;
+  border-radius: var(--radius-8);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.language-button:hover {
+  color: var(--c-text-1);
+  background-color: var(--c-surface-3);
+}
+
+.language-button.active {
+  color: var(--c-text-1);
+  background-color: var(--c-surface-1);
+  box-shadow: var(--shadow-1);
+}
+
+@media (max-width: 480px) {
+  .language-button {
+    min-width: 36px;
+    height: 28px;
+    padding: 0 var(--space-8);
+    font-size: var(--text-12);
   }
 }

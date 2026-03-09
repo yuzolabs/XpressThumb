@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useReducer } from 'react'
+import { useEffect, useMemo, useReducer, useState, useCallback } from 'react'
 import './App.css'
 import '../shared/styles/tokens.css'
 import { editorReducer } from '../features/editor/state/reducer'
 import { createInitialState } from '../features/editor/state/initialState'
 import { TextPosition } from '../shared/types/editor'
 import { exportAndDownloadWithAssets } from '../features/editor/render/export'
-import { I18nContext, getBrowserLocale, getMessages } from '../shared/i18n'
+import { I18nContext, getInitialLocale, getMessages, setStoredLocale, LanguageSelector, type SupportedLocale } from '../shared/i18n'
 import {
   RatioSelect,
   TextInput,
@@ -25,10 +25,15 @@ import {
 import { PreviewCanvasHost } from '../features/editor/components/PreviewCanvasHost'
 
 function App() {
-  const locale = useMemo(() => getBrowserLocale(), [])
+  const [locale, setLocale] = useState<SupportedLocale>(() => getInitialLocale())
   const messages = useMemo(() => getMessages(locale), [locale])
   const initialState = useMemo(() => createInitialState(locale), [locale])
   const [state, dispatch] = useReducer(editorReducer, initialState)
+
+  const handleLocaleChange = useCallback((newLocale: SupportedLocale) => {
+    setLocale(newLocale)
+    setStoredLocale(newLocale)
+  }, [])
 
   useEffect(() => {
     document.documentElement.lang = locale
@@ -62,8 +67,11 @@ function App() {
       <div className="app-shell" data-testid="app-shell">
         <header className="app-header">
           <div className="app-header-content">
-            <h1 className="app-title">XpressThumb</h1>
-            <p className="app-subtitle">{messages.app.subtitle}</p>
+            <div className="app-header-branding">
+              <h1 className="app-title">XpressThumb</h1>
+              <p className="app-subtitle">{messages.app.subtitle}</p>
+            </div>
+            <LanguageSelector value={locale} onChange={handleLocaleChange} />
           </div>
         </header>
 

@@ -2,6 +2,8 @@ import { createContext, useContext } from 'react'
 
 export type SupportedLocale = 'en' | 'ja'
 
+const STORAGE_KEY = 'xpress-thumb-locale'
+
 const MESSAGE_CATALOGS = {
   en: {
     defaults: {
@@ -291,6 +293,26 @@ export function getBrowserLocale(language?: string): SupportedLocale {
   return resolveLocale(browserLanguage)
 }
 
+export function getStoredLocale(): SupportedLocale | null {
+  if (typeof localStorage === 'undefined') return null
+  const stored = localStorage.getItem(STORAGE_KEY)
+  if (stored === 'en' || stored === 'ja') {
+    return stored
+  }
+  return null
+}
+
+export function setStoredLocale(locale: SupportedLocale): void {
+  if (typeof localStorage === 'undefined') return
+  localStorage.setItem(STORAGE_KEY, locale)
+}
+
+export function getInitialLocale(): SupportedLocale {
+  const stored = getStoredLocale()
+  if (stored) return stored
+  return getBrowserLocale()
+}
+
 export function getMessages(locale: SupportedLocale): MessageCatalog {
   return MESSAGE_CATALOGS[locale]
 }
@@ -304,3 +326,5 @@ export const I18nContext = createContext<MessageCatalog>(MESSAGE_CATALOGS.en)
 export function useMessages(): MessageCatalog {
   return useContext(I18nContext)
 }
+
+export { LanguageSelector } from './LanguageSelector'
