@@ -1,5 +1,6 @@
 import React from 'react';
 import type { SupportedLocale } from './index';
+import { useMessages } from './index';
 
 interface LanguageSelectorProps {
   value: SupportedLocale;
@@ -7,13 +8,14 @@ interface LanguageSelectorProps {
 }
 
 export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ value, onChange }) => {
+  const messages = useMessages();
   const options: { value: SupportedLocale; label: string }[] = [
     { value: 'en', label: 'EN' },
     { value: 'ja', label: 'JA' },
   ];
 
   return (
-    <div className="language-selector" role="radiogroup" aria-label="Select language">
+    <div className="language-selector" role="radiogroup" aria-label={messages.languageSelector.ariaLabel}>
       {options.map((option) => (
         <button
           key={option.value}

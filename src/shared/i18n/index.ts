@@ -24,6 +24,9 @@ const MESSAGE_CATALOGS = {
         exportFailed: (error: string) => `Export failed: ${error}`,
       },
     },
+    languageSelector: {
+      ariaLabel: 'Select language',
+    },
     controls: {
       ratio: {
         label: 'Aspect Ratio',
@@ -156,6 +159,9 @@ const MESSAGE_CATALOGS = {
         unknownError: '不明なエラー',
         exportFailed: (error: string) => `書き出しに失敗しました: ${error}`,
       },
+    },
+    languageSelector: {
+      ariaLabel: '言語を選択',
     },
     controls: {
       ratio: {
@@ -295,16 +301,24 @@ export function getBrowserLocale(language?: string): SupportedLocale {
 
 export function getStoredLocale(): SupportedLocale | null {
   if (typeof localStorage === 'undefined') return null
-  const stored = localStorage.getItem(STORAGE_KEY)
-  if (stored === 'en' || stored === 'ja') {
-    return stored
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (stored === 'en' || stored === 'ja') {
+      return stored
+    }
+    return null
+  } catch {
+    return null
   }
-  return null
 }
 
 export function setStoredLocale(locale: SupportedLocale): void {
   if (typeof localStorage === 'undefined') return
-  localStorage.setItem(STORAGE_KEY, locale)
+  try {
+    localStorage.setItem(STORAGE_KEY, locale)
+  } catch {
+    // Silently fail when localStorage is unavailable (e.g., private mode, security errors)
+  }
 }
 
 export function getInitialLocale(): SupportedLocale {
